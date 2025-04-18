@@ -9,13 +9,44 @@ export default class Reporter {
   // Internal: Creates a websocket connection to the cavy-cli server.
   onStart() {
     const url = 'ws://127.0.0.1:8082/';
+    console.debug('Creating websocket');
     this.ws = new WebSocket(url);
+    this.ws.onerror = console.error
+    this.ws.onopen = () => {
+      console.debug('Successfully opened websocket');
+    }
+    this.ws.onclose = () => {
+      console.debug('Closing websocket');
+    }
+
+    this.overrideConsole('log');
+    this.overrideConsole('debug');
+    this.overrideConsole('warn');
+  }
+
+  overrideConsole(fn) {
+    const original = console[fn];
+    console[fn] = (...args) => {
+      const timestamp = new Date().toISOString();
+      original(`[${timestamp}]`, ...args);
+      this.sendMessage({
+        "message": `${fn.toUpperCase()} ${new Date().toLocaleTimeString()} ${args.join(' ')}`,
+        "level": fn
+      });
+    }
   }
 
   // Internal: Send a single test result to cavy-cli over the websocket connection.
   send(result) {
     if (this.websocketReady()) {
       testData = { event: 'singleResult', data: result };
+      this.sendData(testData);
+    }
+  }
+
+  sendMessage(data) {
+    if (this.websocketReady()) {
+      testData = { event: 'message', data };
       this.sendData(testData);
     }
   }
