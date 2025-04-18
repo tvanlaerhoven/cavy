@@ -57,20 +57,8 @@ export default class Tester extends Component {
       key: Math.random()
     };
     this.testHookStore = props.store;
-    // Default to sending a test report to cavy-cli if no custom reporter is
-    // supplied.
-    if (props.reporter instanceof Function) {
-      const message = 'Deprecation warning: support for custom function' +
-                      'reporters will soon be deprecated. Cavy supports custom ' +
-                      'class based reporters. For more info, see the ' +
-                      'documentation here: ' +
-                      'https://cavy.app/docs/guides/writing-custom-reporters';
-      console.warn(message);
-      this.reporter = props.reporter;
-    } else {
-      reporterClass = props.reporter || Reporter;
-      this.reporter = new reporterClass;
-    }
+    reporterClass = props.reporter || Reporter;
+    this.reporter = new reporterClass;
   }
 
   componentDidMount() {
