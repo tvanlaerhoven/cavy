@@ -21,8 +21,8 @@
     "specs"
   ],
   "peerDependencies": {
-    "react-native": ">= 0.59.0 <= 0.66.0",
-    "react": "^16.8.3 || ^17.0.0"
+    "react-native": "*",
+    "react": "*"
   },
   "author": "Pixie Labs",
   "license": "MIT",
@@ -36,10 +36,10 @@
   },
   "devDependencies": {
     "@babel/runtime": "^7.4.3",
+    "@react-native/metro-config": "0.79.0",
     "babel-jest": "^27.3.1",
     "jest": "^27.3.1",
-    "metro-react-native-babel-preset": "^0.66.2",
-    "react": "^17.0.2",
+    "react": "19.0.0",
     "regenerator-runtime": "^0.13.9"
   },
   "jest": {
