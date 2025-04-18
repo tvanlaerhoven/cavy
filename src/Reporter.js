@@ -1,9 +1,23 @@
-// Internal: Reporter is responsible for sending the test results to
-// the CLI.
+const NOTIFY_INTERVAL = 2_000;
+
+// Internal: Reporter is responsible for sending the test results to the CLI.
 export default class Reporter {
   constructor() {
     // Set the Reporter type to realtime.
     this.type = 'realtime';
+  }
+
+  startNotify() {
+    this.notifyInterval = setInterval(() => {
+      if (this.websocketReady()) {
+        console.debug('Send notify');
+        this.sendData({ event: 'notify', data: {} });
+      }
+    }, NOTIFY_INTERVAL);
+  }
+
+  stopNotify() {
+    clearInterval(this.notifyInterval);
   }
 
   // Internal: Creates a websocket connection to the cavy-cli server.
@@ -22,6 +36,9 @@ export default class Reporter {
     this.overrideConsole('log');
     this.overrideConsole('debug');
     this.overrideConsole('warn');
+
+    // Start sending keep-alive notifications.
+    this.startNotify();
   }
 
   overrideConsole(fn) {
@@ -39,23 +56,20 @@ export default class Reporter {
   // Internal: Send a single test result to cavy-cli over the websocket connection.
   send(result) {
     if (this.websocketReady()) {
-      testData = { event: 'singleResult', data: result };
-      this.sendData(testData);
+      this.sendData({ event: 'singleResult', data: result });
     }
   }
 
   sendMessage(data) {
     if (this.websocketReady()) {
-      testData = { event: 'message', data };
-      this.sendData(testData);
+      this.sendData({ event: 'message', data });
     }
   }
 
   // Internal: Send report to cavy-cli over the websocket connection.
   onFinish(report) {
     if (this.websocketReady()) {
-      testData = { event: 'testingComplete', data: report };
-      this.sendData(testData);
+      this.sendData({ event: 'testingComplete', data: report });
     } else {
       // If cavy-cli is not running, let people know in a friendly way
       const message = "Skipping sending test report to cavy-cli - if you'd " +
@@ -64,6 +78,8 @@ export default class Reporter {
 
       console.log(message);
     }
+
+    this.stopNotify();
   }
 
   // Private: Determines whether data can be sent over the websocket.
