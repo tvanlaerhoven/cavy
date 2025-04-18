@@ -148,7 +148,7 @@ export default class TestRunner {
       const stop = new Date();
       const time = (stop - start) / 1000;
       
-      let fullErrorMessage = `${description}  ❌\n   ${e.message}`;
+      let fullErrorMessage = `${description}  ❌\n   Catched error: ${JSON.stringify(e, null, 2)}`;
       console.warn(fullErrorMessage);
 
       this.results.push({
