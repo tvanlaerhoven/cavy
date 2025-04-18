@@ -1,4 +1,4 @@
-const NOTIFY_INTERVAL = 2_000;
+const NOTIFY_INTERVAL = 10_000;
 
 // Internal: Reporter is responsible for sending the test results to the CLI.
 export default class Reporter {
@@ -10,7 +10,7 @@ export default class Reporter {
   startNotify() {
     this.notifyInterval = setInterval(() => {
       if (this.websocketReady()) {
-        console.debug('Send notify');
+        console.debug('Send notification');
         this.sendData({ event: 'notify', data: {} });
       }
     }, NOTIFY_INTERVAL);
